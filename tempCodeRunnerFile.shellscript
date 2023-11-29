@@ -1,0 +1,5 @@
+if [ ${user:1:1} = 't' ]; then
+        #     printf "${GREEN}${users}\n"
+        # else
+        #     printf "${RED}${users}\n"
+        # fi

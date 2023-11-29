@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# ===
+# COLORS
+# ===
+
+# ANSI Escape code format (https://en.wikipedia.org/wiki/ANSI_escape_code)
+
+# COLOR =  = '\033[#;##m' 
+
+RED='\033[38:5:9m'
+YELLOW='\033[38:5:11m'
+GREEN='\033[38:5:10m'
+WHITE='\033[97m'
+BLUE='\033[36m'
+
+DEFAULT='\033[0m' # No Color
+
+header_flag=$(cat header)
+
+printf "${RED}${header_flag}"
+
+function GetSessionDetails (){
+    USER=`whoami`
+
+    if [ $USER = 'root' ]; then
+        printf "${YELLOW}\n=== !!! ===\nRUNNING AS ADMINISTRATOR\n==========="
+    fi
+
+    printf "\n${BLUE}User: ${RED}${USER}\n"
+
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        printf "${YELLOW}Running ${RED}Linux${DEFAULT}"
+    else
+        printf "${RED}Unknown Distro${DEFAULT}"
+    fi
+
+    echo
+    echo
+} 
+
+function GetActiveUsers(){
+
+    printf "${BLUE}ACTIVE USERS:\n"
+
+    users=`who`
+
+    SAVEIFS=$IFS   # Save current IFS (Internal Field Separator)
+    IFS=$'\n'      # Change IFS to newline char
+    users=($users) # split the `names` string into an array by the same name
+    IFS=$SAVEIFS   # Restore original IFS
+
+    for (( i=0; i<${#users[@]}; i++ ))
+    do
+        echo "$i: ${users[$i]}"
+    done
+
+    # for user in "${users[@]}"; do
+    #     if [[ $user == *"tty"* ]]; then
+    #         echo "tty"
+    #     else
+    #         echo "pts"
+    #     fi
+    # done
+
+    # echo "${users[@]}"
+
+
+
+    # for user_instance in $(who | awk '{print $2}'); do
+    #     if [ ${user_instance::1} == 't' ]; then
+    #         echo "h"
+    #     fi
+    # done
+
+    # for user in ${users}; do
+    #     echo ${users | awk '{print $1}' }
+        # if [ ${user:1:1} = 't' ]; then
+        #     printf "${GREEN}${users}\n"
+        # else
+        #     printf "${RED}${users}\n"
+        # fi
+    # done
+
+    echo
+
+}
+
+function GetAvailableUsers() {
+
+    user_names=$(awk -F: '{print $1}' /etc/passwd)
+    printf "${BLUE}AVAIABLE USERS:\n"
+    for user in $user_names; do
+        printf "${DEFAULT}${user}\n"
+    done
+
+    # echo ${users_name[0]}
+
+}
+
+function Main(){
+
+    GetSessionDetails
+    GetActiveUsers
+    GetAvailableUsers
+
+    printf "${DEFAULT}"
+    
+}
+
+Main
